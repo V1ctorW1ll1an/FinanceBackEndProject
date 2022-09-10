@@ -60,7 +60,7 @@
     ],
     "rootDir": "src",
     "moduleNameMapper": {
-      "@infrastructure/(.*)": "<rootDir>/@core/infrastructure/$1",
+      "@infra/(.*)": "<rootDir>/@core/infra/$1",
       "@gateways/(.*)": "<rootDir>/@core/gateways/$1",
       "@entities/(.*)": "<rootDir>/@core/entities/$1",
       "@useCases/(.*)": "<rootDir>/@core/useCases/$1"
