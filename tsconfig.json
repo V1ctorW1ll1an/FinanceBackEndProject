@@ -15,7 +15,8 @@
       "@infra/*": ["src/@core/infra/*"],
       "@gateways/*": ["src/@core/gateways/*"],
       "@entities/*": ["src/@core/entities/*"],
-      "@useCases/*": ["src/@core/useCases/*"]
+      "@useCases/*": ["src/@core/useCases/*"],
+      "@logic/*": ["src/@core/logic/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

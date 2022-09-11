@@ -1,3 +1,4 @@
+import { Result } from '@logic/Result';
 import crypto from 'crypto';
 
 export class Email {
@@ -11,17 +12,20 @@ export class Email {
     this._email = email;
   }
 
-  public static create(email: string): Email {
+  public static create(email: string): Result<Email> {
     // validate email
-    if (!email) throw new Error('Email is required');
-    if (email.length > 255) throw new Error('Email is too long');
-    if (email.length < 3) throw new Error('Email is too short');
-    // regex validation email
     const regex =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (!regex.test(email)) throw new Error('Email is invalid');
+
+    if (!email) return Result.fail<Email>('Email is required');
+
+    const invalidEmail =
+      email.length > 255 || email.length < 3 || !regex.test(email);
+
+    if (invalidEmail) return Result.fail<Email>('Email is invalid');
+
     const emailObj = new Email(email);
-    return emailObj;
+    return Result.ok<Email>(emailObj);
   }
 }
 
@@ -45,15 +49,18 @@ export class Password {
     this._password = this.encryptPassword(props.password);
   }
 
-  public static create(passwordProps: IPasswordProps): Password {
+  public static create(passwordProps: IPasswordProps): Result<Password> {
     // validate password
-    if (!passwordProps.password) throw new Error('Password is required');
-    if (passwordProps.password.length > 255)
-      throw new Error('Password is too long');
-    if (passwordProps.password.length < 3)
-      throw new Error('Password is too short');
+    if (!passwordProps.password)
+      return Result.fail<Password>('Password is required');
+
+    const invalidPassword =
+      passwordProps.password.length > 255 || passwordProps.password.length < 3;
+
+    if (invalidPassword) return Result.fail<Password>('Password is invalid');
+
     const passwordObj = new Password(passwordProps);
-    return passwordObj;
+    return Result.ok<Password>(passwordObj);
   }
 
   private encryptPassword(password: string): string {
@@ -108,13 +115,15 @@ export class UserEntity {
     this._password = props.password;
   }
 
-  public static create(userProps: IUserEntityProps): UserEntity {
+  public static create(userProps: IUserEntityProps): Result<UserEntity> {
     // validate props
 
-    if (!userProps.name) throw new Error('Name is required');
+    if (!userProps.name) {
+      return Result.fail<UserEntity>('Name is required');
+    }
 
     // create user
     const userEntity = new UserEntity(userProps);
-    return userEntity;
+    return Result.ok<UserEntity>(userEntity);
   }
 }

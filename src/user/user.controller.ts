@@ -1,35 +1,41 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, HttpException } from '@nestjs/common';
 import { CreateUserUseCase } from '@useCases/user/createUserUseCase';
 import { ICreateUserInputDTO } from '@useCases/user/createUserDTO';
+
+const validateRequestKeys = (obj: ICreateUserInputDTO, keys: string[]) =>
+  Object.keys(obj).some((key) => !keys.includes(key));
 
 @Controller('user')
 export class UserController {
   constructor(private readonly _createUserUseCase: CreateUserUseCase) {}
 
   @Post()
-  create(@Body() createUserDto: ICreateUserInputDTO) {
-    return this._createUserUseCase.execute(createUserDto);
+  async create(@Body() createUserDto: ICreateUserInputDTO) {
+    const validKeys = ['name', 'email', 'password'];
+
+    const invalidRequest =
+      Object.keys(createUserDto).length !== 3 ||
+      validateRequestKeys(createUserDto, validKeys);
+
+    if (invalidRequest)
+      throw new HttpException(
+        { status: 'error', statusCode: 400, message: 'Invalid request' },
+        400,
+      );
+
+    const result = await this._createUserUseCase.execute(createUserDto);
+
+    if (result.isFailure) {
+      throw new HttpException(
+        {
+          status: 'error',
+          statusCode: 400,
+          message: result.error,
+        },
+        400,
+      );
+    }
+
+    return result.getValue();
   }
-
-  //#region comments
-  // @Get()
-  // findAll() {
-  //   return this.userService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.userService.update(+id, updateUserDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.userService.remove(+id);
-  // }
-  //#endregion
 }

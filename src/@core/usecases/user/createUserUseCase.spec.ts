@@ -1,34 +1,33 @@
-import { ICreateUserInputDTO, ICreateUserOutputDTO } from "./createUserDTO"
-import { CreateUserUseCase } from "./createUserUseCase"
+import { Result } from '@logic/Result';
+import { ICreateUserInputDTO, ICreateUserOutputDTO } from './createUserDTO';
+import { CreateUserUseCase } from './createUserUseCase';
 
-describe("CreateUserUseCase", () => {
-    it("Should create a user", async () => {
-        // input data, execute use case, return output data
-        const input: ICreateUserInputDTO = {
-            name: "John Doe",
-            email: "johndoe@gmail.com",
-            password: "123456",
-        }
+describe('CreateUserUseCase', () => {
+  it('Should create a user', async () => {
+    // input data, execute use case, return output data
+    const input: ICreateUserInputDTO = {
+      name: 'John Doe',
+      email: 'johndoe@gmail.com',
+      password: '123456',
+    };
 
-        const expectedOutput: ICreateUserOutputDTO = {
-            id: expect.any(String),
-            name: "John Doe",
-            email: "johndoe@gmail.com",
-            password: expect.any(String),
-        }
+    const expectedOutput: ICreateUserOutputDTO = {
+      id: expect.any(String),
+      name: 'John Doe',
+      email: 'johndoe@gmail.com',
+    };
 
-        const userGateway = () => {
-            return {
-                createUserGateway: jest.fn(),
-            }
-        }
+    const userGateway = () => {
+      return {
+        createUserGateway: jest.fn(),
+      };
+    };
 
-        const createUserUseCase = new CreateUserUseCase(userGateway())
+    const createUserUseCase = new CreateUserUseCase(userGateway());
 
-        const output: ICreateUserOutputDTO = await createUserUseCase.execute(
-            input
-        )
+    const output: Result<ICreateUserOutputDTO> =
+      await createUserUseCase.execute(input);
 
-        expect(output).toMatchObject(expectedOutput)
-    })
-})
+    expect(output.getValue()).toMatchObject(expectedOutput);
+  });
+});

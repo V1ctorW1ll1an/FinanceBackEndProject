@@ -63,7 +63,8 @@
       "@infra/(.*)": "<rootDir>/@core/infra/$1",
       "@gateways/(.*)": "<rootDir>/@core/gateways/$1",
       "@entities/(.*)": "<rootDir>/@core/entities/$1",
-      "@useCases/(.*)": "<rootDir>/@core/useCases/$1"
+      "@useCases/(.*)": "<rootDir>/@core/useCases/$1",
+      "@logic/(.*)": "<rootDir>/@core/logic/$1"
     },
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
