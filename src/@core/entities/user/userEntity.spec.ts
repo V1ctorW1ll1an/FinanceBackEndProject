@@ -1,62 +1,113 @@
 // test user entity
 
 import { UserEntity, IUserEntityProps, Email, Password } from './UserEntity';
+import { UserError } from './UserErrors';
 
 describe('UserEntity', () => {
   it('should throw error without email', () => {
-    console.log(Email.create('dsad'));
-    expect(Email.create('').error).toBe('Email is required');
+    const result = Email.create('');
+
+    if (result.isLeft()) {
+      const error = result.value;
+      expect(error.constructor).toBe(UserError.EmailRequiredError);
+      expect(error.getValue().message).toBe('Email is required');
+    }
   });
 
   it('should throw error without password', () => {
-    expect(Password.create({ password: '', salt: '' }).error).toBe(
-      'Password is required',
-    );
+    const result = Password.create({ password: '', salt: '' });
+
+    if (result.isLeft()) {
+      const error = result.value;
+      expect(error.constructor).toBe(UserError.PasswordRequiredError);
+      expect(error.getValue().message).toBe('Password is required');
+    }
   });
 
   it('should throw error with invalid password', () => {
-    expect(Password.create({ password: 'a'.repeat(256), salt: '' }).error).toBe(
-      'Password is invalid',
-    );
+    const test1 = Password.create({ password: 'a'.repeat(256), salt: '' });
 
-    expect(Password.create({ password: 'a'.repeat(2), salt: '' }).error).toBe(
-      'Password is invalid',
-    );
+    if (test1.isLeft()) {
+      const error = test1.value;
+      expect(error.constructor).toBe(UserError.PasswordInvalidError);
+      expect(error.getValue().message).toBe('Password is invalid');
+    }
+
+    const test2 = Password.create({ password: 'a'.repeat(2), salt: '' });
+
+    if (test2.isLeft()) {
+      const error = test2.value;
+      expect(error.constructor).toBe(UserError.PasswordInvalidError);
+      expect(error.getValue().message).toBe('Password is invalid');
+    }
   });
 
   it('should throw error with invalid email', () => {
-    expect(Email.create('invalid').error).toBe('Email is invalid');
+    const test1 = Email.create('a'.repeat(256));
 
-    expect(Email.create('invalid@').error).toBe('Email is invalid');
+    if (test1.isLeft()) {
+      const error = test1.value;
+      expect(error.constructor).toBe(UserError.EmailInvalidError);
+      expect(error.getValue().message).toBe('Email is invalid');
+    }
 
-    expect(Email.create('invalid@invalid').error).toBe('Email is invalid');
+    const test2 = Email.create('invalid@');
 
-    expect(Email.create('invalid@invalid.').error).toBe('Email is invalid');
-    expect(Email.create('a'.repeat(256)).error).toBe('Email is invalid');
+    if (test2.isLeft()) {
+      const error = test2.value;
+      expect(error.constructor).toBe(UserError.EmailInvalidError);
+      expect(error.getValue().message).toBe('Email is invalid');
+    }
 
-    expect(Email.create('a'.repeat(2)).error).toBe('Email is invalid');
+    const test3 = Email.create('invalid@invalid');
+
+    if (test3.isLeft()) {
+      const error = test3.value;
+      expect(error.constructor).toBe(UserError.EmailInvalidError);
+      expect(error.getValue().message).toBe('Email is invalid');
+    }
+
+    const test4 = Email.create('a'.repeat(2));
+
+    if (test4.isLeft()) {
+      const error = test4.value;
+      expect(error.constructor).toBe(UserError.EmailInvalidError);
+      expect(error.getValue().message).toBe('Email is invalid');
+    }
   });
 
   it('should not create a user without name', () => {
     const userProps: IUserEntityProps = {
       id: 'id',
       name: '',
-      email: Email.create('jonhdoe@gmail.com').getValue(),
-      password: Password.create({ password: '12345', salt: '' }).getValue(),
+      email: Email.create('jonhdoe@gmail.com').value.getValue() as Email,
+      password: Password.create({
+        password: '12345',
+        salt: '',
+      }).value.getValue() as Password,
     };
 
-    expect(UserEntity.create(userProps).error).toBe('Name is required');
+    const result = UserEntity.create(userProps);
+
+    if (result.isLeft()) {
+      const error = result.value;
+      expect(error.constructor).toBe(UserError.NameRequiredError);
+      expect(error.getValue().message).toBe('Name is required');
+    }
   });
 
   it('should create a user', () => {
     const userProps: IUserEntityProps = {
       id: '8432742374823',
       name: 'john doe',
-      email: Email.create('jonhdoe@gmail.com').getValue(),
-      password: Password.create({ password: '12345', salt: '' }).getValue(),
+      email: Email.create('jonhdoe@gmail.com').value.getValue() as Email,
+      password: Password.create({
+        password: '12345',
+        salt: '',
+      }).value.getValue() as Password,
     };
 
-    const user = UserEntity.create(userProps).getValue();
+    const user = UserEntity.create(userProps).value.getValue() as UserEntity;
 
     expect(user.id).toBe('8432742374823');
     expect(user.name).toBe('john doe');
@@ -68,56 +119,65 @@ describe('UserEntity', () => {
     const userProps: IUserEntityProps = {
       id: '8432742374823',
       name: 'john doe',
-      email: Email.create('johndoe@gmail.com').getValue(),
-      password: Password.create({ password: '12345', salt: '' }).getValue(),
+      email: Email.create('johndoe@gmail.com').value.getValue() as Email,
+      password: Password.create({
+        password: '12345',
+        salt: '',
+      }).value.getValue() as Password,
     };
 
-    const user = UserEntity.create(userProps);
+    const user = UserEntity.create(userProps).value.getValue() as UserEntity;
 
-    expect(user.getValue().password.value).not.toBe('12345');
+    expect(user.password.value).not.toBe('12345');
   });
 
   it('Should compare password', () => {
     const userProps: IUserEntityProps = {
       id: '8432742374823',
       name: 'john doe',
-      email: Email.create('johndoe@gmail.com').getValue(),
-      password: Password.create({ password: '12345', salt: '' }).getValue(),
+      email: Email.create('johndoe@gmail.com').value.getValue() as Email,
+      password: Password.create({
+        password: '12345',
+        salt: '',
+      }).value.getValue() as Password,
     };
 
-    const user = UserEntity.create(userProps);
+    const user = UserEntity.create(userProps).value.getValue() as UserEntity;
 
-    expect(user.getValue().password.comparePassword('12345')).toBe(true);
+    expect(user.password.comparePassword('12345')).toBe(true);
 
-    expect(user.getValue().password.comparePassword('123456')).toBe(false);
+    expect(user.password.comparePassword('123456')).toBe(false);
   });
 
   it('Should return true with salt', () => {
     const userProps: IUserEntityProps = {
       id: '8432742374823',
       name: 'john doe',
-      email: Email.create('johndoe@gmail.com').getValue(),
+      email: Email.create('johndoe@gmail.com').value.getValue() as Email,
       password: Password.create({
         password: '12345',
         salt: '4666d4544c08bcbd6306ef4b842b1b3f',
-      }).getValue(),
+      }).value.getValue() as Password,
     };
 
-    const user = UserEntity.create(userProps);
+    const user = UserEntity.create(userProps).value.getValue() as UserEntity;
 
-    expect(user.getValue().password.comparePassword('12345')).toBe(true);
+    expect(user.password.comparePassword('12345')).toBe(true);
   });
 
   it('Should create an id when it was not informed', () => {
     const userProps: IUserEntityProps = {
       id: '',
       name: 'john doe',
-      email: Email.create('johndoe@gmail.com').getValue(),
-      password: Password.create({ password: '12345', salt: '' }).getValue(),
+      email: Email.create('johndoe@gmail.com').value.getValue() as Email,
+      password: Password.create({
+        password: '12345',
+        salt: '',
+      }).value.getValue() as Password,
     };
 
-    const user = UserEntity.create(userProps);
+    const user = UserEntity.create(userProps).value.getValue() as UserEntity;
 
-    expect(user.getValue().id).not.toBe('');
+    expect(user.id).not.toBe('');
   });
 });

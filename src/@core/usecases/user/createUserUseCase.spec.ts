@@ -1,4 +1,3 @@
-import { Result } from '@logic/Result';
 import { ICreateUserInputDTO, ICreateUserOutputDTO } from './createUserDTO';
 import { CreateUserUseCase } from './createUserUseCase';
 
@@ -25,9 +24,8 @@ describe('CreateUserUseCase', () => {
 
     const createUserUseCase = new CreateUserUseCase(userGateway());
 
-    const output: Result<ICreateUserOutputDTO> =
-      await createUserUseCase.execute(input);
+    const output = await createUserUseCase.execute(input);
 
-    expect(output.getValue()).toMatchObject(expectedOutput);
+    expect(output.value.getValue()).toMatchObject(expectedOutput);
   });
 });

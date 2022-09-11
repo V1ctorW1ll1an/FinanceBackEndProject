@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpException } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateUserUseCase } from '@useCases/user/createUserUseCase';
 import { ICreateUserInputDTO } from '@useCases/user/createUserDTO';
 
@@ -14,28 +14,27 @@ export class UserController {
     const validKeys = ['name', 'email', 'password'];
 
     const invalidRequest =
-      Object.keys(createUserDto).length !== 3 ||
-      validateRequestKeys(createUserDto, validKeys);
+      Object.keys(createUserDto).length !== 3 || validateRequestKeys(createUserDto, validKeys);
 
     if (invalidRequest)
       throw new HttpException(
-        { status: 'error', statusCode: 400, message: 'Invalid request' },
-        400,
+        { status: 'error', statusCode: HttpStatus.BAD_REQUEST, response: 'Invalid request' },
+        HttpStatus.BAD_REQUEST,
       );
 
     const result = await this._createUserUseCase.execute(createUserDto);
 
-    if (result.isFailure) {
+    if (result.isLeft()) {
       throw new HttpException(
         {
           status: 'error',
-          statusCode: 400,
-          message: result.error,
+          statusCode: HttpStatus.BAD_REQUEST,
+          result: result.value.getValue(),
         },
-        400,
+        HttpStatus.BAD_REQUEST,
       );
     }
 
-    return result.getValue();
+    return result.value.getValue();
   }
 }
