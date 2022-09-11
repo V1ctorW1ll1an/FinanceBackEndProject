@@ -6,13 +6,14 @@ import { Result } from '@logic/Result';
 import { ICreateUserInputDTO, ICreateUserOutputDTO } from './createUserDTO';
 import { UserError } from '../../entities/user/UserErrors';
 
-type CreateUserUseCaseOutput<T> = Either<
-  | Result<UserError.EmailInvalidError>
-  | Result<UserError.EmailRequiredError>
-  | Result<UserError.NameRequiredError>
-  | Result<UserError.PasswordRequiredError>
-  | Result<AppError.UnexpectedError>,
-  Result<T>
+type CreateUserUseCaseOutput = Either<
+  | UserError.EmailInvalidError
+  | UserError.EmailRequiredError
+  | UserError.NameRequiredError
+  | UserError.PasswordInvalidError
+  | UserError.PasswordRequiredError
+  | AppError.UnexpectedError,
+  Result<any>
 >;
 
 export class CreateUserUseCase {
@@ -22,67 +23,52 @@ export class CreateUserUseCase {
     this._userGateway = userGateway;
   }
 
-  async execute(input: ICreateUserInputDTO): Promise<CreateUserUseCaseOutput<any>> {
-    const emailOrError = Email.create(input.email);
+  async execute(input: ICreateUserInputDTO): Promise<CreateUserUseCaseOutput> {
+    // validations
+    const emailOrError: Either<
+      UserError.EmailInvalidError | UserError.EmailRequiredError,
+      Result<Email>
+    > = Email.create(input.email);
 
     if (emailOrError.isLeft()) {
-      const error = emailOrError.value;
-
-      switch (error.constructor) {
-        case UserError.EmailRequiredError:
-          return left(Result.fail<UserError.EmailRequiredError>(error));
-        case UserError.EmailInvalidError:
-          return left(Result.fail<UserError.EmailInvalidError>(error));
-        default:
-          break;
-      }
+      return left(emailOrError.value);
     }
 
-    const passwordOrError = Password.create({ password: input.password });
+    const passwordOrError: Either<
+      UserError.PasswordInvalidError | UserError.PasswordRequiredError,
+      Result<Password>
+    > = Password.create({
+      password: input.password,
+    });
 
     if (passwordOrError.isLeft()) {
-      const error = passwordOrError.value;
-
-      switch (error.constructor) {
-        case UserError.PasswordRequiredError:
-          return left(Result.fail<UserError.PasswordRequiredError>(error));
-        default:
-          break;
-      }
+      return left(passwordOrError.value);
     }
 
-    if (passwordOrError.isRight() && emailOrError.isRight()) {
-      const userOrError = UserEntity.create({
-        name: input.name,
-        email: emailOrError.value.getValue(),
-        password: passwordOrError.value.getValue(),
-      });
+    const userOrError = UserEntity.create({
+      name: input.name,
+      email: emailOrError.value.getValue(),
+      password: passwordOrError.value.getValue(),
+    });
 
-      if (userOrError.isLeft()) {
-        const error = userOrError.value;
-
-        switch (error.constructor) {
-          case UserError.NameRequiredError:
-            return left(Result.fail<UserError.NameRequiredError>(error));
-          default:
-            break;
-        }
-      }
-
-      if (userOrError.isRight()) {
-        try {
-          await this._userGateway.createUserGateway(userOrError.value.getValue());
-          return right(
-            Result.ok<ICreateUserOutputDTO>({
-              id: userOrError.value.getValue().id,
-              name: userOrError.value.getValue().name,
-              email: userOrError.value.getValue().email.value,
-            }),
-          );
-        } catch (error) {
-          return left(Result.fail<AppError.UnexpectedError>(error));
-        }
-      }
+    if (userOrError.isLeft()) {
+      return left(userOrError.value);
     }
+
+    // try execute use case
+    try {
+      await this._userGateway.createUserGateway(userOrError.value.getValue());
+    } catch (error) {
+      return left(new AppError.UnexpectedError(error));
+    }
+
+    // if success return the user with the id
+    return right(
+      Result.ok<ICreateUserOutputDTO>({
+        id: userOrError.value.getValue().id,
+        name: userOrError.value.getValue().name,
+        email: userOrError.value.getValue().email.value,
+      }),
+    );
   }
 }
