@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+
+import { CreateUserController } from './createUser.controller';
 import { InMemoryUser } from '@infra/db/inMemoryUser';
 import { CreateUserUseCase } from '@useCases/user/createUserUseCase';
 import { IUserGateway } from '@gateways/user/userGateway';
 
 @Module({
-  controllers: [UserController],
+  controllers: [CreateUserController],
   providers: [
-    UserService,
     {
       provide: InMemoryUser,
       useClass: InMemoryUser,
@@ -22,4 +21,4 @@ import { IUserGateway } from '@gateways/user/userGateway';
     },
   ],
 })
-export class UserModule {}
+export class CreateUserModule {}

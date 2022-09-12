@@ -1,7 +1,6 @@
 import { Either, left, right } from '@logic/Either';
 import { Result } from '@logic/Result';
 import { UserError } from '@entities/user/UserErrors';
-import crypto from 'crypto';
 import { Email } from './valueObjects/EmailVO';
 import { Password } from './valueObjects/PasswordVO';
 import { Entity } from '@entities/Entity';

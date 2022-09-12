@@ -7,6 +7,7 @@ import { ICreateUserInputDTO, ICreateUserOutputDTO } from './createUserDTO';
 import { UserError } from '../../entities/user/UserErrors';
 import { Email } from '@entities/user/valueObjects/EmailVO';
 import { Password } from '@entities/user/valueObjects/PasswordVO';
+import { CreateUserError } from './createUserErrors';
 
 type CreateUserUseCaseOutput = Either<
   | UserError.EmailInvalidError
@@ -14,7 +15,7 @@ type CreateUserUseCaseOutput = Either<
   | UserError.NameRequiredError
   | UserError.PasswordInvalidError
   | UserError.PasswordRequiredError
-  | UserError.EmailAlreadyExistsError
+  | CreateUserError.EmailAlreadyExistsError
   | AppError.UnexpectedError,
   Result<any>
 >;
@@ -66,7 +67,7 @@ export class CreateUserUseCase {
 
       if (user && user.email.value && userOrError.value.getValue().email.equals(user.email)) {
         return left(
-          new UserError.EmailAlreadyExistsError(userOrError.value.getValue().email.value),
+          new CreateUserError.EmailAlreadyExistsError(userOrError.value.getValue().email.value),
         );
       }
 

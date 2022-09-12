@@ -6,7 +6,7 @@ const validateRequestKeys = (obj: ICreateUserInputDTO, keys: string[]) =>
   Object.keys(obj).some((key) => !keys.includes(key));
 
 @Controller('user')
-export class UserController {
+export class CreateUserController {
   constructor(private readonly _createUserUseCase: CreateUserUseCase) {}
 
   @Post()
