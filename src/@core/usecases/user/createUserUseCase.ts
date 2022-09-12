@@ -1,10 +1,12 @@
-import { Email, Password, UserEntity } from '@entities/user/UserEntity';
+import { UserEntity } from '@entities/user/UserEntity';
 import { IUserGateway } from '@gateways/user/userGateway';
 import { Either, left, right } from '@logic/Either';
 import { AppError } from '@logic/GenericErrors';
 import { Result } from '@logic/Result';
 import { ICreateUserInputDTO, ICreateUserOutputDTO } from './createUserDTO';
 import { UserError } from '../../entities/user/UserErrors';
+import { Email } from '@entities/user/valueObjects/EmailVO';
+import { Password } from '@entities/user/valueObjects/PasswordVO';
 
 type CreateUserUseCaseOutput = Either<
   | UserError.EmailInvalidError
@@ -12,6 +14,7 @@ type CreateUserUseCaseOutput = Either<
   | UserError.NameRequiredError
   | UserError.PasswordInvalidError
   | UserError.PasswordRequiredError
+  | UserError.EmailAlreadyExistsError
   | AppError.UnexpectedError,
   Result<any>
 >;
@@ -57,6 +60,16 @@ export class CreateUserUseCase {
 
     // try execute use case
     try {
+      const user = await this._userGateway.getUserByEmailGateway(
+        userOrError.value.getValue().email.value,
+      );
+
+      if (user && user.email.value && userOrError.value.getValue().email.equals(user.email)) {
+        return left(
+          new UserError.EmailAlreadyExistsError(userOrError.value.getValue().email.value),
+        );
+      }
+
       await this._userGateway.createUserGateway(userOrError.value.getValue());
     } catch (error) {
       return left(new AppError.UnexpectedError(error));

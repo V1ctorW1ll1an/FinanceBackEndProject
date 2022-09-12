@@ -8,4 +8,8 @@ export class InMemoryUser implements IUserGateway {
     this.users.push(user);
     console.log(this.users);
   }
+
+  async getUserByEmailGateway(email: string): Promise<UserEntity> {
+    return this.users.find((user) => user.email.value === email);
+  }
 }

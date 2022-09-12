@@ -11,6 +11,7 @@ export class UserController {
 
   @Post()
   async create(@Body() createUserDto: ICreateUserInputDTO) {
+    // #region validate request
     const validKeys = ['name', 'email', 'password'];
 
     const invalidRequest =
@@ -18,23 +19,27 @@ export class UserController {
 
     if (invalidRequest)
       throw new HttpException(
-        { status: 'error', statusCode: HttpStatus.BAD_REQUEST, response: 'Invalid request' },
+        { status: HttpStatus.BAD_REQUEST, result: { message: 'Invalid request' } },
         HttpStatus.BAD_REQUEST,
       );
+
+    // #endregion
 
     const result = await this._createUserUseCase.execute(createUserDto);
 
     if (result.isLeft()) {
       throw new HttpException(
         {
-          status: 'error',
-          statusCode: HttpStatus.BAD_REQUEST,
+          status: HttpStatus.BAD_REQUEST,
           result: result.value.getValue(),
         },
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    return result.value.getValue();
+    return {
+      status: HttpStatus.CREATED,
+      result: result.value.getValue(),
+    };
   }
 }

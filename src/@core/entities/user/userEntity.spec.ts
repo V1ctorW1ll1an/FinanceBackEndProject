@@ -1,7 +1,9 @@
 // test user entity
 
-import { UserEntity, IUserEntityProps, Email, Password } from './UserEntity';
+import { UserEntity, IUserEntityProps } from './UserEntity';
 import { UserError } from './UserErrors';
+import { Email } from './valueObjects/EmailVO';
+import { Password } from './valueObjects/PasswordVO';
 
 describe('UserEntity', () => {
   it('should throw error without email', () => {

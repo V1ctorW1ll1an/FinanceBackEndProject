@@ -19,6 +19,7 @@ describe('CreateUserUseCase', () => {
     const userGateway = () => {
       return {
         createUserGateway: jest.fn(),
+        getUserByEmailGateway: jest.fn(),
       };
     };
 
