@@ -1,12 +1,13 @@
 import { UserEntity } from '@entities/user/UserEntity';
+import { Email } from '@entities/user/valueObjects/EmailVO';
+import { Password } from '@entities/user/valueObjects/PasswordVO';
 import { IUserGateway } from '@gateways/user/userGateway';
 import { Either, left, right } from '@logic/Either';
 import { AppError } from '@logic/GenericErrors';
 import { Result } from '@logic/Result';
-import { ICreateUserInputDTO, ICreateUserOutputDTO } from './createUserDTO';
+import { ICryptoService } from '@services/ICryptoService';
 import { UserError } from '../../entities/user/UserErrors';
-import { Email } from '@entities/user/valueObjects/EmailVO';
-import { Password } from '@entities/user/valueObjects/PasswordVO';
+import { ICreateUserInputDTO, ICreateUserOutputDTO } from './createUserDTO';
 import { CreateUserError } from './createUserErrors';
 
 type CreateUserUseCaseOutput = Either<
@@ -22,9 +23,11 @@ type CreateUserUseCaseOutput = Either<
 
 export class CreateUserUseCase {
   private readonly _userGateway: IUserGateway;
+  private readonly _cryptoService: ICryptoService;
 
-  constructor(userGateway: IUserGateway) {
+  constructor(userGateway: IUserGateway, cryptoService: ICryptoService) {
     this._userGateway = userGateway;
+    this._cryptoService = cryptoService;
   }
 
   async execute(input: ICreateUserInputDTO): Promise<CreateUserUseCaseOutput> {
@@ -49,10 +52,15 @@ export class CreateUserUseCase {
       return left(passwordOrError.value);
     }
 
+    const pass = await this._cryptoService.hashPassword(input.password);
+    const hashedPassword = Password.create({
+      password: pass,
+    });
+
     const userOrError = UserEntity.create({
       name: input.name,
       email: emailOrError.value.getValue(),
-      password: passwordOrError.value.getValue(),
+      password: hashedPassword.value.getValue() as Password,
     });
 
     if (userOrError.isLeft()) {
@@ -70,7 +78,6 @@ export class CreateUserUseCase {
           new CreateUserError.EmailAlreadyExistsError(userOrError.value.getValue().email.value),
         );
       }
-
       await this._userGateway.createUserGateway(userOrError.value.getValue());
     } catch (error) {
       return left(new AppError.UnexpectedError(error));

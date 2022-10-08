@@ -6,7 +6,6 @@ export class InMemoryUser implements IUserGateway {
 
   async createUserGateway(user: UserEntity): Promise<void> {
     this.users.push(user);
-    console.log(this.users);
   }
 
   async getUserByEmailGateway(email: string): Promise<UserEntity> {

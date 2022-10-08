@@ -1,6 +1,6 @@
 // test user entity
 
-import { UserEntity, IUserEntityProps } from './UserEntity';
+import { IUserEntityProps, UserEntity } from './UserEntity';
 import { UserError } from './UserErrors';
 import { Email } from './valueObjects/EmailVO';
 import { Password } from './valueObjects/PasswordVO';
@@ -17,7 +17,7 @@ describe('UserEntity', () => {
   });
 
   it('should throw error without password', () => {
-    const result = Password.create({ password: '', salt: '' });
+    const result = Password.create({ password: '' });
 
     if (result.isLeft()) {
       const error = result.value;
@@ -27,7 +27,7 @@ describe('UserEntity', () => {
   });
 
   it('should throw error with invalid password', () => {
-    const test1 = Password.create({ password: 'a'.repeat(256), salt: '' });
+    const test1 = Password.create({ password: 'a'.repeat(256) });
 
     if (test1.isLeft()) {
       const error = test1.value;
@@ -35,7 +35,7 @@ describe('UserEntity', () => {
       expect(error.getValue().message).toBe('Password is invalid');
     }
 
-    const test2 = Password.create({ password: 'a'.repeat(2), salt: '' });
+    const test2 = Password.create({ password: 'a'.repeat(2) });
 
     if (test2.isLeft()) {
       const error = test2.value;
@@ -85,7 +85,6 @@ describe('UserEntity', () => {
       email: Email.create('jonhdoe@gmail.com').value.getValue() as Email,
       password: Password.create({
         password: '12345',
-        salt: '',
       }).value.getValue() as Password,
     };
 
@@ -105,7 +104,6 @@ describe('UserEntity', () => {
       email: Email.create('jonhdoe@gmail.com').value.getValue() as Email,
       password: Password.create({
         password: '12345',
-        salt: '',
       }).value.getValue() as Password,
     };
 
@@ -114,57 +112,6 @@ describe('UserEntity', () => {
     expect(user.id).toBe('8432742374823');
     expect(user.name).toBe('john doe');
     expect(user.email.value).toBe('jonhdoe@gmail.com');
-    expect(user.password.value).not.toBe('12345');
-  });
-
-  it('Should create user and crypto password', () => {
-    const userProps: IUserEntityProps = {
-      id: '8432742374823',
-      name: 'john doe',
-      email: Email.create('johndoe@gmail.com').value.getValue() as Email,
-      password: Password.create({
-        password: '12345',
-        salt: '',
-      }).value.getValue() as Password,
-    };
-
-    const user = UserEntity.create(userProps).value.getValue() as UserEntity;
-
-    expect(user.password.value).not.toBe('12345');
-  });
-
-  it('Should compare password', () => {
-    const userProps: IUserEntityProps = {
-      id: '8432742374823',
-      name: 'john doe',
-      email: Email.create('johndoe@gmail.com').value.getValue() as Email,
-      password: Password.create({
-        password: '12345',
-        salt: '',
-      }).value.getValue() as Password,
-    };
-
-    const user = UserEntity.create(userProps).value.getValue() as UserEntity;
-
-    expect(user.password.comparePassword('12345')).toBe(true);
-
-    expect(user.password.comparePassword('123456')).toBe(false);
-  });
-
-  it('Should return true with salt', () => {
-    const userProps: IUserEntityProps = {
-      id: '8432742374823',
-      name: 'john doe',
-      email: Email.create('johndoe@gmail.com').value.getValue() as Email,
-      password: Password.create({
-        password: '12345',
-        salt: '4666d4544c08bcbd6306ef4b842b1b3f',
-      }).value.getValue() as Password,
-    };
-
-    const user = UserEntity.create(userProps).value.getValue() as UserEntity;
-
-    expect(user.password.comparePassword('12345')).toBe(true);
   });
 
   it('Should create an id when it was not informed', () => {
@@ -174,7 +121,6 @@ describe('UserEntity', () => {
       email: Email.create('johndoe@gmail.com').value.getValue() as Email,
       password: Password.create({
         password: '12345',
-        salt: '',
       }).value.getValue() as Password,
     };
 

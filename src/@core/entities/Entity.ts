@@ -14,7 +14,7 @@ export abstract class Entity<T extends Properties> {
   protected props: T;
   public readonly isNew: boolean;
 
-  constructor(props: T, isNew: boolean = true) {
+  constructor(props: T, isNew = true) {
     const handler = () => {
       const setPropertyDirty = (prop: string) => {
         if (!this.isNew) {

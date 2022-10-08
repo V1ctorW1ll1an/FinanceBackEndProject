@@ -16,7 +16,8 @@
       "@gateways/*": ["src/@core/gateways/*"],
       "@entities/*": ["src/@core/entities/*"],
       "@useCases/*": ["src/@core/useCases/*"],
-      "@logic/*": ["src/@core/logic/*"]
+      "@logic/*": ["src/@core/logic/*"],
+      "@services/*": ["src/@core/services/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

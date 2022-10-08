@@ -1,4 +1,5 @@
 import { ICreateUserInputDTO, ICreateUserOutputDTO } from './createUserDTO';
+import { CreateUserError } from './createUserErrors';
 import { CreateUserUseCase } from './createUserUseCase';
 
 describe('CreateUserUseCase', () => {
@@ -23,8 +24,16 @@ describe('CreateUserUseCase', () => {
       };
     };
 
-    const createUserUseCase = new CreateUserUseCase(userGateway());
+    const cryptoService = () => {
+      return {
+        hashPassword: jest.fn(),
+        comparePassword: jest.fn(),
+      };
+    };
 
+    const createUserUseCase = new CreateUserUseCase(userGateway(), cryptoService());
+
+    await createUserUseCase.execute(input);
     const output = await createUserUseCase.execute(input);
 
     expect(output.value.getValue()).toMatchObject(expectedOutput);
