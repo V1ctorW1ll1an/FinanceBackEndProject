@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
-import { ICryptoService } from './ICryptoService';
+import { ICryptoProvider } from './ICryptoProvider';
 
-export class BCryptService implements ICryptoService {
+export class BCryptProvider implements ICryptoProvider {
   async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, 10);
   }

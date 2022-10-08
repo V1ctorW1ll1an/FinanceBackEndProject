@@ -5,7 +5,7 @@ import { IUserGateway } from '@gateways/user/userGateway';
 import { Either, left, right } from '@logic/Either';
 import { AppError } from '@logic/GenericErrors';
 import { Result } from '@logic/Result';
-import { ICryptoService } from '@services/ICryptoService';
+import { ICryptoProvider } from '@providers/ICryptoProvider';
 import { UserError } from '../../entities/user/UserErrors';
 import { ICreateUserInputDTO, ICreateUserOutputDTO } from './createUserDTO';
 import { CreateUserError } from './createUserErrors';
@@ -23,11 +23,11 @@ type CreateUserUseCaseOutput = Either<
 
 export class CreateUserUseCase {
   private readonly _userGateway: IUserGateway;
-  private readonly _cryptoService: ICryptoService;
+  private readonly _cryptoProvider: ICryptoProvider;
 
-  constructor(userGateway: IUserGateway, cryptoService: ICryptoService) {
+  constructor(userGateway: IUserGateway, cryptoService: ICryptoProvider) {
     this._userGateway = userGateway;
-    this._cryptoService = cryptoService;
+    this._cryptoProvider = cryptoService;
   }
 
   async execute(input: ICreateUserInputDTO): Promise<CreateUserUseCaseOutput> {
@@ -52,7 +52,7 @@ export class CreateUserUseCase {
       return left(passwordOrError.value);
     }
 
-    const pass = await this._cryptoService.hashPassword(input.password);
+    const pass = await this._cryptoProvider.hashPassword(input.password);
     const hashedPassword = Password.create({
       password: pass,
     });

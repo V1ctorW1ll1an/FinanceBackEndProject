@@ -17,7 +17,7 @@
       "@entities/*": ["src/@core/entities/*"],
       "@useCases/*": ["src/@core/useCases/*"],
       "@logic/*": ["src/@core/logic/*"],
-      "@services/*": ["src/@core/services/*"]
+      "@providers/*": ["src/@core/providers/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

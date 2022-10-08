@@ -1,7 +1,7 @@
 import argon2 from 'argon2';
-import { ICryptoService } from './ICryptoService';
+import { ICryptoProvider } from '@providers/ICryptoProvider';
 
-export class Argon2Service implements ICryptoService {
+export class Argon2Provider implements ICryptoProvider {
   async hashPassword(password: string): Promise<string> {
     return await argon2.hash(password, {
       hashLength: 140,

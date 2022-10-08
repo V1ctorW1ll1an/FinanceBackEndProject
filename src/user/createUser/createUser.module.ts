@@ -2,9 +2,9 @@ import { IUserGateway } from '@gateways/user/userGateway';
 import { InMemoryUser } from '@infra/db/inMemoryUser';
 import { Module } from '@nestjs/common';
 import { CreateUserUseCase } from '@useCases/user/createUserUseCase';
-import { Argon2Service } from 'src/@core/services/Argon2Service';
-import { ICryptoService } from 'src/@core/services/ICryptoService';
-import { BCryptService } from './../../@core/services/BCryptService';
+import { Argon2Provider } from '@providers/Argon2Provider';
+import { ICryptoProvider } from '@providers/ICryptoProvider';
+import { BCryptProvider } from '@providers/BCryptProvider';
 import { CreateUserController } from './createUser.controller';
 
 @Module({
@@ -15,19 +15,19 @@ import { CreateUserController } from './createUser.controller';
       useClass: InMemoryUser,
     },
     {
-      provide: Argon2Service,
-      useClass: Argon2Service,
+      provide: Argon2Provider,
+      useClass: Argon2Provider,
     },
     {
-      provide: BCryptService,
-      useClass: BCryptService,
+      provide: BCryptProvider,
+      useClass: BCryptProvider,
     },
     {
       provide: CreateUserUseCase,
-      useFactory: (userGateway: IUserGateway, cryptoService: ICryptoService) => {
-        return new CreateUserUseCase(userGateway, cryptoService);
+      useFactory: (userGateway: IUserGateway, cryptoProvider: ICryptoProvider) => {
+        return new CreateUserUseCase(userGateway, cryptoProvider);
       },
-      inject: [InMemoryUser, BCryptService],
+      inject: [InMemoryUser, BCryptProvider],
     },
   ],
 })
