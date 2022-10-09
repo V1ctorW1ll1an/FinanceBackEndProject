@@ -1,7 +1,7 @@
-import { ValueObject } from '@entities/ValueObject';
-import { Either, left, right } from '@logic/Either';
-import { Result } from '@logic/Result';
-import { UserError } from '../UserErrors';
+import { ValueObject } from '@entities/abstracts/ValueObject';
+import { Either, left, right } from '@common/Either';
+import { Result } from '@common/Result';
+import { UserError } from '@entities/user/UserErrors';
 
 export interface IPasswordProps {
   password: string;
@@ -10,6 +10,10 @@ export interface IPasswordProps {
 export class Password extends ValueObject<IPasswordProps> {
   public get value(): string {
     return this.props.password;
+  }
+
+  protected set value(value: string) {
+    this.props.password = value;
   }
 
   private constructor(props: IPasswordProps) {

@@ -1,11 +1,11 @@
-import { IGenericError } from '@logic/GenericErrors';
-import { Result } from '@logic/Result';
+import { IGenericError } from '@common/GenericErrors';
+import { Result } from '@common/Result';
 
 export namespace UserError {
   export class EmailInvalidError extends Result<IGenericError> {
     public constructor(email?: string) {
       super(false, {
-        message: 'Email is invalid',
+        message: 'Email is invalid.',
       });
     }
 
@@ -17,7 +17,7 @@ export namespace UserError {
   export class EmailRequiredError extends Result<IGenericError> {
     public constructor(email?: string) {
       super(false, {
-        message: 'Email is required',
+        message: 'Email is required.',
       });
     }
 
@@ -29,7 +29,7 @@ export namespace UserError {
   export class NameRequiredError extends Result<IGenericError> {
     public constructor(name?: string) {
       super(false, {
-        message: 'Name is required',
+        message: 'Name is required.',
       });
     }
 
@@ -41,7 +41,7 @@ export namespace UserError {
   export class PasswordRequiredError extends Result<IGenericError> {
     public constructor() {
       super(false, {
-        message: 'Password is required',
+        message: 'Password is required.',
       });
     }
 
@@ -53,7 +53,7 @@ export namespace UserError {
   export class PasswordInvalidError extends Result<IGenericError> {
     public constructor() {
       super(false, {
-        message: 'Password is invalid',
+        message: 'Password is invalid.',
       });
     }
 

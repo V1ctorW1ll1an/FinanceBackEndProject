@@ -10,7 +10,7 @@ interface Properties {
 
 export abstract class Entity<T extends Properties> {
   private _dirtyProperties: string[];
-  protected readonly _id: string;
+  protected _id: string;
   protected props: T;
   public readonly isNew: boolean;
 
@@ -43,6 +43,10 @@ export abstract class Entity<T extends Properties> {
 
   public get id(): string {
     return this._id;
+  }
+
+  protected set id(value: string) {
+    this._id = value;
   }
 
   public getDirtyProps(): string[] {
