@@ -1,5 +1,5 @@
-import { IGenericError } from '@logic/GenericErrors';
-import { Result } from '@logic/Result';
+import { IGenericError } from '@common/GenericErrors';
+import { Result } from '@common/Result';
 
 export namespace AuthenticateError {
   export class InvalidEmailOrPassword extends Result<IGenericError> {

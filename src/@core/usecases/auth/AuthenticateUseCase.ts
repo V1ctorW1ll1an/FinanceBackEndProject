@@ -1,13 +1,13 @@
 import { ICryptoProvider } from '@providers/ICryptoProvider';
 import { IJwtProvider } from '@providers/IJwtProvider';
 import { IUserGateway } from '@gateways/user/userGateway';
-import { Email } from '@entities/user/valueObjects/EmailVO';
+import { Email } from '@entities/valueObjects/EmailVO';
 import { UserError } from '@entities/user/UserErrors';
-import { Either, left, right } from '@logic/Either';
-import { AppError } from '@logic/GenericErrors';
-import { Result } from '@logic/Result';
+import { Either, left, right } from '@common/Either';
+import { AppError } from '@common/GenericErrors';
+import { Result } from '@common/Result';
 import { AuthenticateError } from './authenticateErrors';
-import { Password } from '@entities/user/valueObjects/PasswordVO';
+import { Password } from '@entities/valueObjects/PasswordVO';
 
 export interface IAuthenticateInputDTO {
   email: string;
@@ -55,7 +55,7 @@ export class AuthenticateUseCase {
       return left(passwordOrError.value);
     }
 
-    const user = await this._userGateway.getUserByEmailGateway(emailOrError.value.getValue().value);
+    const user = await this._userGateway.getUserByEmailGateway(emailOrError.value.getValue());
 
     if (!user) {
       return left(

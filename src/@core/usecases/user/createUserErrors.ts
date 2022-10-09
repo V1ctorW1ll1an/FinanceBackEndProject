@@ -1,11 +1,11 @@
-import { IGenericError } from '@logic/GenericErrors';
-import { Result } from '@logic/Result';
+import { IGenericError } from '@common/GenericErrors';
+import { Result } from '@common/Result';
 
 export namespace CreateUserError {
   export class EmailAlreadyExistsError extends Result<IGenericError> {
     public constructor(email: string) {
       super(false, {
-        message: `Email already exists`,
+        message: `Email already exists.`,
       });
     }
 
