@@ -50,8 +50,6 @@ describe('UserSchema', () => {
       },
     });
 
-    console.log(userResponse);
-
     await dataSource.destroy();
   });
 });

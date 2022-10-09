@@ -12,7 +12,7 @@ describe('UserEntity', () => {
     if (result.isLeft()) {
       const error = result.value;
       expect(error.constructor).toBe(UserError.EmailRequiredError);
-      expect(error.getValue().message).toBe('Email is required');
+      expect(error.getValue().message).toBe('Email is required.');
     }
   });
 
@@ -22,7 +22,7 @@ describe('UserEntity', () => {
     if (result.isLeft()) {
       const error = result.value;
       expect(error.constructor).toBe(UserError.PasswordRequiredError);
-      expect(error.getValue().message).toBe('Password is required');
+      expect(error.getValue().message).toBe('Password is required.');
     }
   });
 
@@ -32,13 +32,13 @@ describe('UserEntity', () => {
     expect(test1.isLeft()).toBeTruthy();
     const error = test1.value as UserError.PasswordInvalidError;
     expect(error.constructor).toBe(UserError.PasswordInvalidError);
-    expect(error.getValue().message).toBe('Password is invalid');
+    expect(error.getValue().message).toBe('Password is invalid.');
 
     const test2 = Password.create({ password: 'a'.repeat(2) });
 
     const error2 = test2.value as UserError.PasswordInvalidError;
     expect(error2.constructor).toBe(UserError.PasswordInvalidError);
-    expect(error2.getValue().message).toBe('Password is invalid');
+    expect(error2.getValue().message).toBe('Password is invalid.');
   });
 
   it('should throw error with invalid email', () => {
@@ -46,25 +46,25 @@ describe('UserEntity', () => {
 
     const error = test1.value as UserError.EmailInvalidError;
     expect(error.constructor).toBe(UserError.EmailInvalidError);
-    expect(error.getValue().message).toBe('Email is invalid');
+    expect(error.getValue().message).toBe('Email is invalid.');
 
     const test2 = Email.create('invalid@');
 
     const error2 = test2.value as UserError.EmailInvalidError;
     expect(error2.constructor).toBe(UserError.EmailInvalidError);
-    expect(error2.getValue().message).toBe('Email is invalid');
+    expect(error2.getValue().message).toBe('Email is invalid.');
 
     const test3 = Email.create('invalid@invalid');
 
     const error3 = test3.value as UserError.EmailInvalidError;
     expect(error3.constructor).toBe(UserError.EmailInvalidError);
-    expect(error3.getValue().message).toBe('Email is invalid');
+    expect(error3.getValue().message).toBe('Email is invalid.');
 
     const test4 = Email.create('a'.repeat(2));
 
     const error4 = test4.value as UserError.EmailInvalidError;
     expect(error4.constructor).toBe(UserError.EmailInvalidError);
-    expect(error4.getValue().message).toBe('Email is invalid');
+    expect(error4.getValue().message).toBe('Email is invalid.');
   });
 
   it('should not create a user without name', () => {
@@ -81,7 +81,7 @@ describe('UserEntity', () => {
 
     const error = result.value as UserError.NameRequiredError;
     expect(error.constructor).toBe(UserError.NameRequiredError);
-    expect(error.getValue().message).toBe('Name is required');
+    expect(error.getValue().message).toBe('Name is required.');
   });
 
   it('should create a user', () => {

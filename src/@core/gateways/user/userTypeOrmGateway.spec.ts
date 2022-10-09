@@ -52,8 +52,6 @@ describe('UserTypeOrmGateway', () => {
       where: { email: Equal(user.value.getValue().email) },
     });
 
-    console.log(userResponse);
-
     await dataSource.destroy();
   });
 });

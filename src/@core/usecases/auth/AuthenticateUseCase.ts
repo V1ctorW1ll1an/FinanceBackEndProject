@@ -65,10 +65,8 @@ export class AuthenticateUseCase {
 
     const passwordMatch = await this._hashProvider.comparePassword(
       input.password,
-      user.password.value,
+      user.password.props.password,
     );
-
-    console.log('passwordMatch', passwordMatch);
 
     if (!passwordMatch) {
       return left(
@@ -82,7 +80,7 @@ export class AuthenticateUseCase {
       Result.ok<IAuthenticateOutput>({
         id: user.id,
         name: user.name,
-        email: user.email.value,
+        email: user.email.props.value,
         token,
       }),
     );

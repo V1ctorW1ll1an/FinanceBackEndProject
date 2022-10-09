@@ -10,9 +10,10 @@ export class UserTypeOrmGateway implements IUserGateway {
     await this._ormRepository.save(user);
   }
   getUserByEmailGateway(email: Email): Promise<UserEntity> {
-    return this._ormRepository.findOne({
+    const user = this._ormRepository.findOne({
       where: { email: Equal(JSON.stringify(email)) },
     });
+    return user;
   }
 
   getAllUsersGateway(): Promise<UserEntity[]> {

@@ -39,7 +39,9 @@ export class CreateUserController {
 
     return {
       status: HttpStatus.CREATED,
-      result: result.value.getValue(),
+      result: {
+        message: 'User successfully signed up',
+      },
     };
   }
 }

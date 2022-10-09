@@ -12,10 +12,6 @@ export class Password extends ValueObject<IPasswordProps> {
     return this.props.password;
   }
 
-  protected set value(value: string) {
-    this.props.password = value;
-  }
-
   private constructor(props: IPasswordProps) {
     super(props);
     this.props.password = props.password;
