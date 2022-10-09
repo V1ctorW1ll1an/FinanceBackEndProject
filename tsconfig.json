@@ -16,7 +16,7 @@
       "@gateways/*": ["src/@core/gateways/*"],
       "@entities/*": ["src/@core/entities/*"],
       "@useCases/*": ["src/@core/useCases/*"],
-      "@logic/*": ["src/@core/logic/*"],
+      "@common/*": ["src/@core/common/*"],
       "@providers/*": ["src/@core/providers/*"]
     },
     "incremental": true,
