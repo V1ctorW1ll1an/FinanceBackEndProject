@@ -1,9 +1,9 @@
 import { UserEntity } from '@entities/user/UserEntity';
-import { Email } from '@entities/user/valueObjects/EmailVO';
-import { Password } from '@entities/user/valueObjects/PasswordVO';
+import { Email } from '@entities/valueObjects/EmailVO';
+import { Password } from '@entities/valueObjects/PasswordVO';
 import { InMemoryUser } from '@infra/db/inMemoryUser';
-import { right } from '@logic/Either';
-import { Result } from '@logic/Result';
+import { right } from '@common/Either';
+import { Result } from '@common/Result';
 import { BCryptProvider } from '@providers/BCryptProvider';
 import { JwtProvider } from '@providers/JwtProvider';
 import { AuthenticateUseCase } from './AuthenticateUseCase';
